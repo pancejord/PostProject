@@ -1,4 +1,4 @@
-type posts = {
+type Posts = {
     id: string,
     body: string,
     createdAt: string,
@@ -10,4 +10,9 @@ type RegisterInput = {
     email: string,
     password: string,
     confirmPassword: string
+}
+
+type User = {
+    username: string,
+    password: string,
 }
