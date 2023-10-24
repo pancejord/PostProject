@@ -1,18 +1,25 @@
-type Posts = {
+import { Identifier } from "typescript"
+
+export type Posts = {
     id: string,
     body: string,
     createdAt: string,
     username: string
 }
 
-type RegisterInput = {
+
+export type RegisterInput = {
     username: string,
     email: string,
     password: string,
     confirmPassword: string
 }
 
-type User = {
+export type User = {
     username: string,
     password: string,
 }
+
+export interface Context {
+    req: Request;
+  }

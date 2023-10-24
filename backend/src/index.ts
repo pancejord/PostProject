@@ -19,6 +19,7 @@ const startServer = async () => {
   try {
     await mongoose.connect(process.env.MONGODB, { useNewUrlParser: true });
     const { url } = await startStandaloneServer(server, {
+      context: async ({req}) => ({req}),
       listen: { port: 4000 },
     });
     console.log(`Server is running at ${url}`);

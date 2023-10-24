@@ -1,9 +1,6 @@
-module.exports.validateRegsiterInputs = (
-    username: string,
-    email: string,
-    password: string,
-    confirmPassword: string,   
-) => {
+import { RegisterInput } from "../types";
+
+module.exports.validateRegsiterInputs = ({username, email, password, confirmPassword}: RegisterInput) => {
     const errors: any = {};
 
     if (username.trim() === ""){
