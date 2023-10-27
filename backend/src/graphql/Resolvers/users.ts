@@ -72,12 +72,13 @@ module.exports = {
             }
 
             //Hash user and create Auth token
+
             password = bcrypt.hash(password, 12)
 
-            const newUser = await new User({
+            const newUser = new User({
                 username,
-                password,
                 email,
+                password,
                 confirmPassword,
             })
 
@@ -85,15 +86,16 @@ module.exports = {
 
             const token = jwt.sign({
                 id: res.id,
+                password: res.password,
                 username: res.username,
-                email: res.email,
             }, SECRET_KEY, {expiresIn: "1hr"})
 
             return {
                 ...res._doc,
                 id: res._id,
-                token,
+                token
             }
+            
 
 
             

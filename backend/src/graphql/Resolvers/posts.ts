@@ -1,4 +1,6 @@
 import { GraphQLError } from "graphql";
+import { PubSub } from "graphql-subscriptions";
+import { Posts } from "../../types";
 
 const Post = require("../../models/Post")
 
@@ -6,6 +8,13 @@ const checkAuth = require("../../util/check-auth")
 
 interface Context {
     req: Request;
+    pubsub: PubSub
+  }
+
+  type ID = string;
+
+  interface Like {
+    username: string;
   }
   
 
@@ -49,12 +58,45 @@ module.exports = {
                 createdAt: new Date().toISOString()
 
             })
-            const post = await newPost();
+            const post = await newPost.save();
+            context.pubsub.publish('NEW_POST', {
+                newPost: post
+            })
             return post;
 
 
 
         },
+
+
+        likePost: async (_: any, args: {postId: ID}, context: Context) => {
+
+            const {postId} = args;
+
+            const {user} = checkAuth(context);
+
+            const post = await Post.findByID(postId);
+
+            if(post) {
+                if(post.likes.find((like: Like) => like.username === user)) {
+                    (post.likes.filter((like: Like) => like.username !== user))
+                } else {
+                    post.likes.push({
+                        username: user.username,
+                        createdAt: new Date().toISOString(),
+
+                    })
+                }
+
+            };
+
+
+
+
+
+
+
+        }
 
     },
     Query: {
@@ -98,12 +140,28 @@ module.exports = {
             
           }
     
-        },
-      },
+        }
+    },
+
+
+
+        Subscription: {
+            newPost: {
+                subscribe: (_: any, __: any, context: Context) => {
+                    const { pubsub } = context;
+                   return pubsub.asyncIterator(["NEW_POST"])
+
+                }
+            }
+        }
+
+        }
+      
 
 
 
 
 
 
-}
+
+
